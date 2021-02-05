@@ -5,10 +5,14 @@ import com.roy.brewery.web.model.v2.BeerDtoV2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/api/v2/beer")
 public class BeerControllerV2 {
@@ -20,12 +24,12 @@ public class BeerControllerV2 {
     }
 
     @GetMapping("/{beerId}")
-    public ResponseEntity<BeerDtoV2> getBeer(@PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<BeerDtoV2> getBeer(@NotNull @PathVariable("beerId") UUID beerId) {
         return new ResponseEntity<>(beerService.getBeerById(beerId), HttpStatus.OK);
     }
 
     @PostMapping // create a new beer
-    public ResponseEntity handlePost(@RequestBody BeerDtoV2 beerDto) {
+    public ResponseEntity handlePost(@Valid @NotNull @RequestBody BeerDtoV2 beerDto) {
         BeerDtoV2 savedDto = beerService.saveBeer(beerDto);
 
         HttpHeaders headers = new HttpHeaders();
@@ -36,7 +40,7 @@ public class BeerControllerV2 {
     }
 
     @PutMapping("/{beerId}")
-    public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId, @RequestBody BeerDtoV2 beerDto) {
+    public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId, @Valid @NotNull @RequestBody BeerDtoV2 beerDto) {
 
         beerService.updateBeer(beerId, beerDto);
 
@@ -48,4 +52,5 @@ public class BeerControllerV2 {
     public void deleteBeer(@PathVariable("beerId") UUID beerId) {
         beerService.deleteById(beerId);
     }
+
 }
